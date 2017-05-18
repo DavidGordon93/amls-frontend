@@ -22,27 +22,27 @@ import models.SatisfactionSurvey
 import play.api.Logger
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import audit.SurveyEvent
-import scala.concurrent.Future
+import uk.gov.hmrc.play.frontend.controller.UnauthorisedAction
 
 trait SatisfactionSurveyController extends BaseController {
 
   val auditConnector: AuditConnector
 
-  def get(edit: Boolean = false) = Authorised.async {
-    implicit authContext => implicit request =>
-      Future.successful(Ok(views.html.satisfaction_survey(EmptyForm)))
+  def get(edit: Boolean = false) = UnauthorisedAction {
+     implicit request =>
+      Ok(views.html.satisfaction_survey(EmptyForm))
   }
 
-  def post(edit: Boolean = false) = Authorised.async {
-    implicit authContext => implicit request => {
+  def post(edit: Boolean = false) = UnauthorisedAction {
+    implicit request => {
       Form2[SatisfactionSurvey](request.body) match {
         case f: InvalidForm =>
-          Future.successful(BadRequest(views.html.satisfaction_survey(f)))
+          BadRequest(views.html.satisfaction_survey(f))
         case ValidForm(_, data) => {
           auditConnector.sendEvent(SurveyEvent(data)).onFailure {
             case e: Throwable => Logger.error(s"[SatisfactionSurveyController][post] ${e.getMessage}", e)
           }
-          Future.successful(Redirect(routes.LandingController.get()))
+          Redirect("http://www.gov.uk")
         }
       }
     }
