@@ -484,4 +484,7 @@ POST        /renewal/percentage                                         @control
 GET         /renewal/receiving                                          @controllers.renewal.ReceiveCashPaymentsController.get(edit: Boolean ?= false)
 POST        /renewal/receiving                                          @controllers.renewal.ReceiveCashPaymentsController.post(edit: Boolean ?= false)
 
+GET         /renewal/update-or-renew                                    @controllers.renewal.UpdateOrRenewController.get()
+POST        /renewal/update-or-renew                                    @controllers.renewal.UpdateOrRenewController.post()
+
 GET         /renewal/check-your-answers                                 @controllers.renewal.SummaryController.get()
