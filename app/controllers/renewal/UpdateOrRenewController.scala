@@ -18,12 +18,16 @@ package controllers.renewal
 
 import javax.inject.{Inject, Singleton}
 
-import cats.data.OptionT
 import controllers.BaseController
+import forms.{EmptyForm, Form2, InvalidForm, ValidForm}
+import models.renewal.UpdateOrRenew
+import models.renewal.UpdateOrRenew.{First, Second}
 import models.status.ReadyForRenewal
 import services.StatusService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import views.html.renewal._
+
+import scala.concurrent.Future
 
 @Singleton
 class UpdateOrRenewController @Inject()(val authConnector: AuthConnector, val statusService :StatusService) extends BaseController {
@@ -34,7 +38,7 @@ class UpdateOrRenewController @Inject()(val authConnector: AuthConnector, val st
         statusInfo <- statusService.getDetailedStatus
       } yield {
         statusInfo match {
-          case (ReadyForRenewal(renewalDate), _) => Ok(update_or_renew(renewalDate))
+          case (ReadyForRenewal(renewalDate), _) => Ok(update_or_renew(EmptyForm, renewalDate))
           case _ => throw new Exception("Cannot get renewal date")
         }
       }
@@ -43,6 +47,15 @@ class UpdateOrRenewController @Inject()(val authConnector: AuthConnector, val st
   def post(edit: Boolean = false) = Authorised.async {
     implicit authContext =>
       implicit request =>
-        ???
-  }
+        Form2[UpdateOrRenew](request.body) match {
+          case f: InvalidForm =>
+            Future.successful(BadRequest(update_or_renew(f, None)))
+          case ValidForm(_, data) =>
+            data match {
+              case First => Future.successful(Redirect(routes.RenewalProgressController.get()))
+              case Second => Future.successful(Redirect(controllers.routes.RegistrationProgressController.get()))
+              case _ => throw new Exception("Invalid selection")
+            }
+          }
+        }
 }

@@ -1610,6 +1610,13 @@ renewal.hvd.percentage.title = What proportion of your turnover in the last 12 m
 renewal.msb.largest.amounts.title = Where did you send the largest amounts of money in the last 12 months?
 
 renewal.customers.outside.uk.hint.lbl = Where did these customers live or work?
+
+renewal.updateorrenew.title = Are you renewing your supervision for another year?
+renewal.updateorrenew.info = Your anti-money laundering supervision will expire on {0}. If you’re going to renew your registration for another year you should update your information as part of your renewal.
+renewal.updateorrenew.lbl.01 = I need to renew and update my information
+renewal.updateorrenew.lbl.02 = I’m not renewing this year, I just need to update my information
+
+error.required.updateorrenew = Select one option to show if you’re going to renew you supervision for another year
 ############################### Survey ###############################
 
 survey.satisfaction.heading = Give feedback

@@ -76,7 +76,7 @@ class status_supervisedSpec extends GenericTestHelper with MustMatchers {
       doc.getElementsMatchingOwnText(Messages("status.readyforrenewal.warning")).text must be
       Messages("status.readyforrenewal.warning", renewalDate)
 
-      doc.getElementsMatchingOwnText(Messages("status.amendment.edit")).attr("href") must be("/anti-money-laundering/update-or-renew")
+      doc.getElementsMatchingOwnText(Messages("status.amendment.edit")).attr("href") must be("/anti-money-laundering/renewal/update-or-renew")
     }
 
     "contains expected survey link for supervised status" in new ViewFixture {

@@ -18,39 +18,46 @@
 @import include.{main, heading}
 @import include.forms2._
 @import org.joda.time.LocalDate
+@import utils.DateHelper
 
-@(endDate: Option[LocalDate])(implicit messages: Messages, request: Request[_])
+@(f: Form2[_], endDate: Option[LocalDate])(implicit messages: Messages, request: Request[_])
 
 @header = {
     @errorSummary(f)
-    @heading("businessmatching.businessType.title", "summary.businessmatching")
+    @heading("renewal.updateorrenew.title", "amendment.section-heading")
 }
 
 @main(
-    title = Messages("businessmatching.businessType.title") + " - " + Messages("summary.businessmatching"),
+    title = Messages("renewal.updateorrenew.title") + " - " + Messages("amendment.section-heading"),
     heading = header
 ) {
 
-@form(f, controllers.businessmatching.routes.BusinessTypeController.post()) {
+@form(f, controllers.renewal.routes.UpdateOrRenewController.post()) {
+
+    <p>
+        @endDate.map {date =>
+            @messages("renewal.updateorrenew.info", DateHelper.formatDate(date))
+        }
+    </p>
 
     @fieldset(
-        f = f("businessType-fieldset"),
-        legend = "businessmatching.businessType.title",
+        f = f("updateorrenew-fieldset"),
+        legend = "renewal.updateorrenew.title",
         legendHidden = true,
         panel = false
     ) {
         @errorGroup(
-        field = f("businessType")
+        field = f("updateorrenew")
         ) {
 
             @radio(
-                f = f("businessType"),
-                labelText = "businessmatching.businessType.lbl.01",
+                f = f("updateorrenew"),
+                labelText = "renewal.updateorrenew.lbl.01",
                 value = "01"
             )
             @radio(
-                f = f("businessType"),
-                labelText = "businessmatching.businessType.lbl.02",
+                f = f("updateorrenew"),
+                labelText = "renewal.updateorrenew.lbl.02",
                 value = "02"
             )
 
