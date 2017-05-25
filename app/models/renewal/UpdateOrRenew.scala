@@ -32,7 +32,7 @@ object UpdateOrRenew {
   implicit val formRule: Rule[UrlFormEncoded, UpdateOrRenew] = From[UrlFormEncoded] { __ =>
     import jto.validation.forms.Rules._
     import models.FormTypes._
-    (__ \ "updateorrenew").read[String] flatMap {
+    (__ \ "updateorrenew").read[String].withMessage("error.required.updateorrenew") flatMap {
       case "01" => First
       case "02" => Second
       case _ =>

@@ -44,7 +44,7 @@ class UpdateOrRenewController @Inject()(val authConnector: AuthConnector, val st
       }
   }
 
-  def post(edit: Boolean = false) = Authorised.async {
+  def post() = Authorised.async {
     implicit authContext =>
       implicit request =>
         Form2[UpdateOrRenew](request.body) match {
