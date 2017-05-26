@@ -29,6 +29,8 @@ object UpdateOrRenew {
 
   import utils.MappingUtils.Implicits._
 
+  val key = "updateorrenew"
+
   implicit val formRule: Rule[UrlFormEncoded, UpdateOrRenew] = From[UrlFormEncoded] { __ =>
     import jto.validation.forms.Rules._
     import models.FormTypes._

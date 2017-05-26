@@ -15,7 +15,7 @@
  *@
 
 @import include._
-@import models.registrationprogress.Section
+@import models.registrationprogress.{NotStarted, Section}
 @import models.registrationprogress._
 @import views.html.registrationamendment.section
 @import views.html.registrationamendment.section_list
@@ -51,7 +51,11 @@
             }
             <div class="grid-layout grid-layout--stacked renewal-progress-section">
                 <ul class="grid-layout__column grid-layout__column--2-3 progress-steps progress-steps__amend">
-                    @section(renewalSection.name, renewalSection.status, renewalSection.hasChanged, renewalSection.call)
+                    @if(renewalSection.status == NotStarted) {
+                        @views.html.registrationprogress.section(renewalSection.name, renewalSection.status, renewalSection.call)
+                    } else {
+                        @section(renewalSection.name, renewalSection.status, renewalSection.hasChanged, renewalSection.call)
+                    }
                 </ul>
             </div>
 
