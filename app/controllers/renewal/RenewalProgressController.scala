@@ -44,16 +44,10 @@ class RenewalProgressController @Inject()
   val statusService :StatusService
 ) extends BaseController {
 
-  private def amendmentDeclarationAvailable(sections: Seq[Section]) = {
-
-    sections.foldLeft((true, false)) { (acc, s) =>
-      (acc._1 && s.status == Completed,
-        acc._2 || s.hasChanged)
-    } match {
-      case (true, true) => true
-      case _ => false
+  private def declarationAvailable(seq: Seq[Section]): Boolean =
+    seq forall {
+      _.status == Completed
     }
-  }
 
   def get() = Authorised.async {
     implicit authContext =>
@@ -67,7 +61,7 @@ class RenewalProgressController @Inject()
             val variationSections = progressService.sections(cache).filter(_.name != BusinessMatching.messageKey)
             val businessMatching = cache.getEntry[BusinessMatching](BusinessMatching.key)
             val msbOrTcspExists = ControllerHelper.isMSBSelected(businessMatching) || ControllerHelper.isTCSPSelected(businessMatching)
-            val canSubmit = (renewalSection.status == Completed && renewalSection.hasChanged) | amendmentDeclarationAvailable(variationSections)
+            val canSubmit = (renewalSection.status == Completed && renewalSection.hasChanged && declarationAvailable(progressService.sections(cache)))
 
             statusInfo match {
               case (ReadyForRenewal(renewalDate), _) => Ok(renewal_progress(renewalSection, variationSections, canSubmit, msbOrTcspExists, renewalDate))

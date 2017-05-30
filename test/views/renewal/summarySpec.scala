@@ -97,6 +97,7 @@ class summarySpec extends GenericTestHelper
           Some(SendTheLargestAmountsOfMoney(Country("France", "FR"))),
           Some(MostTransactions(Seq(Country("United Kingdom", "GB")))),
           Some(CETransactionsInLast12Months("123")),
+          None,
           false
         )
 

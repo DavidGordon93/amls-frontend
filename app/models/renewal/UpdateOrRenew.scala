@@ -19,6 +19,7 @@ package models.renewal
 import jto.validation._
 import jto.validation.forms.UrlFormEncoded
 import jto.validation.ValidationError
+import play.api.libs.json.{Writes, _}
 
 sealed trait UpdateOrRenew
 
@@ -29,8 +30,6 @@ object UpdateOrRenew {
 
   import utils.MappingUtils.Implicits._
 
-  val key = "updateorrenew"
-
   implicit val formRule: Rule[UrlFormEncoded, UpdateOrRenew] = From[UrlFormEncoded] { __ =>
     import jto.validation.forms.Rules._
     import models.FormTypes._
@@ -40,5 +39,20 @@ object UpdateOrRenew {
       case _ =>
         (Path \ "updateorrenew") -> Seq(ValidationError("error.required.updateorrenew"))
     }
+  }
+
+  implicit val jsonReads = {
+    import play.api.libs.json.Reads.StringReads
+    (__ \ "percentage").read[String].flatMap[UpdateOrRenew] {
+      case "01" => First
+      case "02" => Second
+      case _ =>
+        play.api.data.validation.ValidationError("error.invalid")
+    }
+  }
+
+  implicit val jsonWrites = Writes[UpdateOrRenew] {
+    case First => Json.obj("percentage" -> "01")
+    case Second => Json.obj("percentage" -> "02")
   }
 }

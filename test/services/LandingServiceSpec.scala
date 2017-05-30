@@ -174,6 +174,7 @@ class LandingServiceSpec extends PlaySpec with MockitoSugar with ScalaFutures wi
       Some(SendTheLargestAmountsOfMoney(Country("United Kingdom", "GB"),None,None)),
       Some(MostTransactions(List(Country("United Kingdom", "GB")))),
       Some(CETransactionsInLast12Months("12345678963")),
+      None,
       false)
 
 

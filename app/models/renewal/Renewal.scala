@@ -31,6 +31,7 @@ case class Renewal(
                     sendTheLargestAmountsOfMoney: Option[SendTheLargestAmountsOfMoney] = None,
                     mostTransactions: Option[MostTransactions] = None,
                     ceTransactionsInLast12Months: Option[CETransactionsInLast12Months] = None,
+                    updateOrRenew: Option[UpdateOrRenew] = None,
                     hasChanged: Boolean = false
 ) {
   def involvedInOtherActivities(model: InvolvedInOther): Renewal =
@@ -68,6 +69,9 @@ case class Renewal(
 
   def ceTransactionsInLast12Months(p: CETransactionsInLast12Months): Renewal =
     this.copy(ceTransactionsInLast12Months = Some(p), hasChanged = hasChanged || !this.ceTransactionsInLast12Months.contains(p))
+
+  def updateOrRenew(p: UpdateOrRenew): Renewal =
+    this.copy(updateOrRenew = Some(p))
 
   def mostTransactions(model: MostTransactions): Renewal =
     this.copy(mostTransactions = Some(model), hasChanged = hasChanged || !this.mostTransactions.contains(model))

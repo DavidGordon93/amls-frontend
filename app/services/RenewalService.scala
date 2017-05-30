@@ -43,7 +43,7 @@ class RenewalService @Inject()(dataCache: DataCacheConnector) {
             Future.successful(Section("renewal", Completed, model.hasChanged, controllers.renewal.routes.SummaryController.get()))
           } else {
             model match {
-              case Renewal(None, None, None, None, _, _, _, _, _, _, _, _, _) => Future.successful(notStarted)
+              case Renewal(None, None, None, None, _, _, _, _, _, _, _, _, _, _) => Future.successful(notStarted)
               case _ => Future.successful(Section("renewal", Started, model.hasChanged, controllers.renewal.routes.WhatYouNeedController.get()))
             }
           }
@@ -77,8 +77,8 @@ class RenewalService @Inject()(dataCache: DataCacheConnector) {
         checkCompletionOfHvd(renewal)
       } else {
           renewal match {
-            case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), None, None, None, None, None, None, None, None, _) => true
-            case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), None, None, None, None, None, None, None, None, _) => true
+            case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), None, None, None, None, None, None, None, None, None, _) => true
+            case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), None, None, None, None, None, None, None, None, None, _) => true
             case _ => false
           }
         }
@@ -93,14 +93,14 @@ class RenewalService @Inject()(dataCache: DataCacheConnector) {
     msbServices match {
       case Some(x) if x.msbServices.contains(CurrencyExchange) =>
         renewal match {
-          case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), _) => true
-          case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), _) => true
+          case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), _, _) => true
+          case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), _, _) => true
           case _ => false
         }
       case _ =>
         renewal match {
-        case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), None, Some(_), Some(_), Some(_), None, _) => true
-        case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), Some(_), Some(_), Some(_), None, Some(_), Some(_), Some(_), None, _) => true
+        case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), None, Some(_), Some(_), Some(_), None, _, _) => true
+        case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), Some(_), Some(_), Some(_), None, Some(_), Some(_), Some(_), None, _, _) => true
         case _ => false
       }
     }
@@ -111,14 +111,14 @@ class RenewalService @Inject()(dataCache: DataCacheConnector) {
     msbServices match {
       case Some(x) if x.msbServices.contains(CurrencyExchange) =>
         renewal match {
-          case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), None, None, Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), _) => true
-          case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), None, None, Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), _) => true
+          case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), None, None, Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), _, _) => true
+          case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), None, None, Some(_), Some(_), Some(_), Some(_), Some(_), Some(_), _, _) => true
           case _ => false
         }
       case _ =>
         renewal match {
-          case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), None, None, Some(_), None, Some(_), Some(_), Some(_), None, _) => true
-          case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), None, None, Some(_), None, Some(_), Some(_), Some(_), None, _) => true
+          case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), None, None, Some(_), None, Some(_), Some(_), Some(_), None, _, _) => true
+          case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), None, None, Some(_), None, Some(_), Some(_), Some(_), None, _, _) => true
           case _ => false
         }
     }
@@ -126,8 +126,8 @@ class RenewalService @Inject()(dataCache: DataCacheConnector) {
 
   private def checkCompletionOfHvd(renewal: Renewal) = {
     renewal match {
-      case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), Some(_), Some(_), None, None, None, None, None, None, _) => true
-      case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), Some(_), Some(_), None, None, None, None, None, None, _) => true
+      case Renewal(Some(InvolvedInOtherYes(_)), Some(_), Some(_), Some(_), Some(_), Some(_), None, None, None, None, None, None, _, _) => true
+      case Renewal(Some(InvolvedInOtherNo), None, Some(_), Some(_), Some(_), Some(_), None, None, None, None, None, None, _, _) => true
       case _ => false
     }
   }

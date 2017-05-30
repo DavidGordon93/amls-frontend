@@ -48,14 +48,18 @@ class UpdateOrRenewControllerSpec extends GenericTestHelper with MockitoSugar wi
     val request = addToken(authRequest)
 
     val mockCacheMap = mock[CacheMap]
+    val dataCacheConnector = mock[DataCacheConnector]
 
     val emptyCache = CacheMap("", Map.empty)
 
     val statusService = mock[StatusService]
+    val renewalService = mock[RenewalService]
     lazy val app = new GuiceApplicationBuilder()
       .disable[com.kenshoo.play.metrics.PlayModule]
+      .overrides(bind[DataCacheConnector].to(dataCacheConnector))
       .overrides(bind[AuthConnector].to(self.authConnector))
       .overrides(bind[StatusService].to(statusService))
+      .overrides(bind[RenewalService].to(renewalService))
       .build()
 
     val controller = app.injector.instanceOf[UpdateOrRenewController]
@@ -89,6 +93,13 @@ class UpdateOrRenewControllerSpec extends GenericTestHelper with MockitoSugar wi
         val newRequest = request.withFormUrlEncodedBody(
           "updateorrenew" -> "01"
         )
+
+        when(controller.dataCacheConnector.fetch[Renewal](any())(any(), any(), any()))
+          .thenReturn(Future.successful(None))
+
+        when(renewalService.updateRenewal(any())(any(), any(), any()))
+          .thenReturn(Future.successful(emptyCache))
+
         val result = controller.post()(newRequest)
 
 
@@ -99,6 +110,13 @@ class UpdateOrRenewControllerSpec extends GenericTestHelper with MockitoSugar wi
         val newRequest = request.withFormUrlEncodedBody(
           "updateorrenew" -> "02"
         )
+
+        when(controller.dataCacheConnector.fetch[Renewal](any())(any(), any(), any()))
+          .thenReturn(Future.successful(None))
+
+        when(renewalService.updateRenewal(any())(any(), any(), any()))
+          .thenReturn(Future.successful(emptyCache))
+
         val result = controller.post()(newRequest)
 
 

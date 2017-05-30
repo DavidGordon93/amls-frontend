@@ -18,19 +18,24 @@ package controllers.renewal
 
 import javax.inject.{Inject, Singleton}
 
+import cats.data.OptionT
+import connectors.DataCacheConnector
 import controllers.BaseController
 import forms.{EmptyForm, Form2, InvalidForm, ValidForm}
-import models.renewal.UpdateOrRenew
+import models.aboutthebusiness.AboutTheBusiness
+import models.renewal.{Renewal, UpdateOrRenew}
 import models.renewal.UpdateOrRenew.{First, Second}
 import models.status.ReadyForRenewal
-import services.StatusService
+import services.{RenewalService, StatusService}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import views.html.renewal._
 
 import scala.concurrent.Future
 
 @Singleton
-class UpdateOrRenewController @Inject()(val authConnector: AuthConnector, val statusService :StatusService) extends BaseController {
+class UpdateOrRenewController @Inject()(val authConnector: AuthConnector, val statusService :StatusService,
+                                        val dataCacheConnector : DataCacheConnector,
+                                        val renewalService :RenewalService) extends BaseController {
 
   def get = Authorised.async {
     implicit authContext => implicit request =>
@@ -51,9 +56,12 @@ class UpdateOrRenewController @Inject()(val authConnector: AuthConnector, val st
           case f: InvalidForm =>
             Future.successful(BadRequest(update_or_renew(f, None)))
           case ValidForm(_, data) =>
-            data match {
-              case First => Future.successful(Redirect(routes.RenewalProgressController.get()))
-              case Second => Future.successful(Redirect(controllers.routes.RegistrationProgressController.get()))
+            for {
+              renewal <- dataCacheConnector.fetch[Renewal](Renewal.key)
+              _ <- renewalService.updateRenewal(renewal.updateOrRenew(data))
+            } yield data match {
+              case First => Redirect(routes.RenewalProgressController.get())
+              case Second => Redirect(controllers.routes.RegistrationProgressController.get())
               case _ => throw new Exception("Invalid selection")
             }
           }
