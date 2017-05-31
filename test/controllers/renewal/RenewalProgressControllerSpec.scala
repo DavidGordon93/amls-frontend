@@ -141,6 +141,12 @@ class RenewalProgressControllerSpec extends GenericTestHelper {
 
     "load the page when status is renewal submitted and one of the section is modified" in new Fixture {
 
+      val renewalSubmittedSection = Section("renewal", Completed, hasChanged = false, mock[Call])
+
+      when {
+        renewalService.getSection(any(), any(), any())
+      } thenReturn Future.successful(renewalSubmittedSection)
+
       when(statusService.getDetailedStatus(any(), any(), any()))
         .thenReturn(Future.successful((RenewalSubmitted(Some(renewalDate)), Some(readStatusResponse))))
 

@@ -72,7 +72,7 @@ trait RegistrationProgressController extends BaseController {
           case Some(data) =>
             data.updateOrRenew match {
             case Some(First) => true
-            case Some(Second) => false
+            case _ => false
           }
           case None => false
         }

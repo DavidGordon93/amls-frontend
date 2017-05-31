@@ -19,7 +19,7 @@ package controllers
 import connectors.DataCacheConnector
 import models.businessmatching.BusinessMatching
 import models.registrationprogress.{Completed, NotStarted, Section}
-import models.renewal.{InvolvedInOtherNo, Renewal}
+import models.renewal.{InvolvedInOtherNo, Renewal, UpdateOrRenew}
 import models.responsiblepeople._
 import models.status._
 import org.joda.time.LocalDate
@@ -94,8 +94,9 @@ class RegistrationProgressControllerSpec extends GenericTestHelper with MustMatc
 
     "redirect to renewal registration progress" when {
       "status is ready for renewal and" must {
-        "renewal data exists in save4later" in new Fixture {
-          when(controller.dataCache.fetch[Renewal](any())(any(), any(), any())).thenReturn(Future.successful(Some(Renewal(Some(InvolvedInOtherNo)))))
+        "renewal data exists in save4later and user has said yes to renewal question" in new Fixture {
+          when(controller.dataCache.fetch[Renewal](any())(any(), any(), any())).thenReturn(Future.successful(
+            Some(Renewal(Some(InvolvedInOtherNo), updateOrRenew = Some(UpdateOrRenew.First)))))
           when(controller.statusService.getStatus(any(), any(), any()))
             .thenReturn(Future.successful(ReadyForRenewal(None)))
 
@@ -109,7 +110,8 @@ class RegistrationProgressControllerSpec extends GenericTestHelper with MustMatc
     "redirect to renewal registration progress" when {
       "status is ready for renewal submitted" must {
         "renewal data exists in save4later" in new Fixture {
-          when(controller.dataCache.fetch[Renewal](any())(any(), any(), any())).thenReturn(Future.successful(Some(Renewal(Some(InvolvedInOtherNo)))))
+          when(controller.dataCache.fetch[Renewal](any())(any(), any(), any())).thenReturn(Future.successful(
+            Some(Renewal(Some(InvolvedInOtherNo), updateOrRenew = Some(UpdateOrRenew.First)))))
           when(controller.statusService.getStatus(any(), any(), any()))
             .thenReturn(Future.successful(RenewalSubmitted(None)))
 
