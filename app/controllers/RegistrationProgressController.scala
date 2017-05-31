@@ -21,6 +21,7 @@ import connectors.DataCacheConnector
 import models.businessmatching.BusinessMatching
 import models.registrationprogress.{Completed, Section}
 import models.renewal.Renewal
+import models.renewal.UpdateOrRenew.{First, Second}
 import models.responsiblepeople.ResponsiblePeople
 import models.status._
 import play.api.mvc.{Action, AnyContent, Request}
@@ -68,7 +69,11 @@ trait RegistrationProgressController extends BaseController {
     statusService.getStatus flatMap {
       case ReadyForRenewal(_) | RenewalSubmitted(_) =>
         dataCache.fetch[Renewal](Renewal.key) map {
-          case Some(_) => true
+          case Some(data) =>
+            data.updateOrRenew match {
+            case Some(First) => true
+            case Some(Second) => false
+          }
           case None => false
         }
 
