@@ -461,6 +461,57 @@ class ResponsiblePeopleSpec extends PlaySpec with MockitoSugar with ResponsibleP
         }
       }
     }
+    "ukPassport value is set" which {
+      "is the same as before" must {
+        "leave the object unchanged" in {
+          val result = completeResponsiblePeople.ukPassport(UKPassportNo)
+          result must be(completeResponsiblePeople)
+          result.hasChanged must be(false)
+        }
+      }
+
+      "is different" must {
+        "set the hasChanged & previouslyRegisterd Properties" in {
+          val result = completeResponsiblePeople.ukPassport(UKPassportYes("87654321"))
+          result must be(completeResponsiblePeople.copy(ukPassport = Some(UKPassportYes("87654321")), hasChanged = true))
+          result.hasChanged must be(true)
+        }
+      }
+    }
+    "nonUKPassport value is set" which {
+      "is the same as before" must {
+        "leave the object unchanged" in {
+          val result = completeResponsiblePeople.nonUKPassport(NoPassport)
+          result must be(completeResponsiblePeople)
+          result.hasChanged must be(false)
+        }
+      }
+
+      "is different" must {
+        "set the hasChanged & previouslyRegisterd Properties" in {
+          val result = completeResponsiblePeople.nonUKPassport(NonUKPassportYes("87654321"))
+          result must be(completeResponsiblePeople.copy(nonUKPassport = Some(NonUKPassportYes("87654321")), hasChanged = true))
+          result.hasChanged must be(true)
+        }
+      }
+    }
+    "dateOfBirth value is set" which {
+      "is the same as before" must {
+        "leave the object unchanged" in {
+          val result = completeResponsiblePeople.dateOfBirth(DateOfBirth(new LocalDate(1990,10,2)))
+          result must be(completeResponsiblePeople)
+          result.hasChanged must be(false)
+        }
+      }
+
+      "is different" must {
+        "set the hasChanged & previouslyRegisterd Properties" in {
+          val result = completeResponsiblePeople.dateOfBirth(DateOfBirth(new LocalDate(1990,12,12)))
+          result must be(completeResponsiblePeople.copy(dateOfBirth = Some(DateOfBirth(new LocalDate(1990,12,12))), hasChanged = true))
+          result.hasChanged must be(true)
+        }
+      }
+    }
     "status value is set" which {
       "is the same as before" must {
         "leave the object unchanged" in {
@@ -517,7 +568,7 @@ trait ResponsiblePeopleValues extends NinoUtil{
     //scalastyle:off magic.number
     val previousName = PreviousName(Some("oldFirst"), Some("oldMiddle"), Some("oldLast"), new LocalDate(1990, 2, 24))
     val personName = PersonName("first", Some("middle"), "last", Some(previousName), Some("name"))
-    val personResidenceType = PersonResidenceType(residence, residenceCountry, Some(residenceNationality))
+    val personResidenceType = PersonResidenceType(residence, Some(residenceCountry), Some(residenceNationality))
     val saRegistered = SaRegisteredYes("0123456789")
     val contactDetails = ContactDetails("07702743555", "test@test.com")
     val addressHistory = ResponsiblePersonAddressHistory(Some(currentAddress), Some(additionalAddress))
@@ -525,6 +576,9 @@ trait ResponsiblePeopleValues extends NinoUtil{
     val training = TrainingYes("test")
     val experienceTraining = ExperienceTrainingYes("Some training")
     val positions = Positions(Set(BeneficialOwner, InternalAccountant), startDate)
+    val ukPassport = UKPassportNo
+    val nonUKPassport = NoPassport
+    val dateOfBirth = DateOfBirth(new LocalDate(1990,10,2))
   }
 
   object NewValues {
@@ -544,7 +598,7 @@ trait ResponsiblePeopleValues extends NinoUtil{
     val personName = PersonName("first", Some("middle"), "last", None, None)
     val contactDetails = ContactDetails("07000000000", "new@test.com")
     val addressHistory = ResponsiblePersonAddressHistory(Some(currentAddress), Some(additionalAddress))
-    val personResidenceType = PersonResidenceType(residence, residenceCountry, Some(residenceNationality))
+    val personResidenceType = PersonResidenceType(residence, Some(residenceCountry), Some(residenceNationality))
     val saRegistered = SaRegisteredNo
     val vatRegistered = VATRegisteredYes("12345678")
     val positions = Positions(Set(Director, SoleProprietor), startDate)
@@ -555,9 +609,9 @@ trait ResponsiblePeopleValues extends NinoUtil{
   val completeResponsiblePeople = ResponsiblePeople(
     Some(DefaultValues.personName),
     Some(DefaultValues.personResidenceType),
-    None,
-    None,
-    None,
+    Some(DefaultValues.ukPassport),
+    Some(DefaultValues.nonUKPassport),
+    Some(DefaultValues.dateOfBirth),
     Some(DefaultValues.contactDetails),
     Some(DefaultValues.addressHistory),
     Some(DefaultValues.positions),
@@ -600,6 +654,15 @@ trait ResponsiblePeopleValues extends NinoUtil{
       "nino" -> nino,
       "countryOfBirth" -> "GB",
       "nationality" -> "GB"
+    ),
+    "ukPassport" -> Json.obj(
+      "ukPassport" -> false
+    ),
+    "nonUKPassport" -> Json.obj(
+      "nonUKPassport" -> false
+    ),
+    "dateOfBirth" -> Json.obj(
+      "dateOfBirth" -> "1990-10-02"
     ),
     "contactDetails" -> Json.obj(
       "phoneNumber" -> "07702743555",
