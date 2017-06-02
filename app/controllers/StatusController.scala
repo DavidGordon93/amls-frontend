@@ -99,7 +99,8 @@ trait StatusController extends BaseController {
       case (NotCompleted, _) | (SubmissionReady, _) | (SubmissionReadyForReview, _) =>
         Future.successful(getInitialSubmissionPage(mlrRegNumber,statusInfo, businessNameOption, feeResponse))
       case (SubmissionDecisionApproved, _) | (SubmissionDecisionRejected, _) |
-           (SubmissionDecisionRevoked, _) | (SubmissionDecisionExpired, _) =>
+           (SubmissionDecisionRevoked, _) | (SubmissionDecisionExpired, _) |
+            (SubmissionWithdrawn, _) | (DeRegistered, _) =>
         Future.successful(getDecisionPage(mlrRegNumber, statusInfo, businessNameOption))
       case (ReadyForRenewal(_), _) | (RenewalSubmitted(_), _) =>
         getRenewalFlowPage(mlrRegNumber, statusInfo, businessNameOption)
@@ -124,13 +125,24 @@ trait StatusController extends BaseController {
                               businessNameOption: Option[String])(implicit request: Request[AnyContent]) = {
     statusInfo match {
       case (SubmissionDecisionApproved, statusDtls) =>
-        Ok(status_supervised(mlrRegNumber.getOrElse(""),
-          businessNameOption,
-          statusDtls.fold[Option[LocalDate]](None)(x =>x.currentRegYearEndDate), false)
-        )
+        val endDate = statusDtls.fold[Option[LocalDate]](None)(_.currentRegYearEndDate)
+
+        Ok {
+          //noinspection ScalaStyle
+          status_supervised(mlrRegNumber.getOrElse(""), businessNameOption, endDate, renewalFlow = false, allowDeRegister = ApplicationConfig.allowDeRegisterToggle)
+        }
+
       case (SubmissionDecisionRejected, _) => Ok(status_rejected(mlrRegNumber.getOrElse(""), businessNameOption))
       case (SubmissionDecisionRevoked, _) => Ok(status_revoked(mlrRegNumber.getOrElse(""), businessNameOption))
       case (SubmissionDecisionExpired, _) => Ok(status_expired(mlrRegNumber.getOrElse(""), businessNameOption))
+      case (SubmissionWithdrawn, _) => Ok(status_withdrawn(businessNameOption))
+      case (DeRegistered, _) =>
+        val deregistrationDate = for {
+          info <- statusInfo._2
+          date <- info.deRegistrationDate
+        } yield date
+
+        Ok(status_deregistered(businessNameOption, deregistrationDate))
     }
   }
 
@@ -153,7 +165,7 @@ trait StatusController extends BaseController {
                 Future.successful(Ok(status_renewal_incomplete(mlrRegNumber.getOrElse(""),businessNameOption,renewalDate)))
               }
             }
-          case _ => Future.successful(Ok(status_supervised(mlrRegNumber.getOrElse(""), businessNameOption, renewalDate, true)))
+          case _ => Future.successful(Ok(status_supervised(mlrRegNumber.getOrElse(""), businessNameOption, renewalDate, true, ApplicationConfig.allowDeRegisterToggle)))
         }
       }
     }
